@@ -15,3 +15,4 @@ def write_csv(filename, header, records, out_folder='out'):
 
 #TestTuple = namedtuple('TestTuple', 'employee task')
 #write_csv("test.csv", TestTuple, [TestTuple('qwe','task1'), TestTuple('asd','task2')])
+
