@@ -20,7 +20,4 @@ for issue_content in issues_content:
     create_story(issue_content)
 
 print('done!')
-#jql = 'project = PR '
-#issues_list = jira.search_issues(jql)
-#issue = jira.issue('CFD-5792', expand='changelog,transitions,history')
 
