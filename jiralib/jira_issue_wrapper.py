@@ -1,5 +1,7 @@
+import urllib
 from datetime import datetime
 
+import jira_connector
 from jiralib.pm_calc import get_working_days
 
 jira_datetime_tempalte = '%Y-%m-%d %H:%M:%S.%f'
@@ -9,6 +11,7 @@ open_statuses = ['Open', 'To Do', 'Reopened', 'Backlog', 'Ready for Development'
 closed_statuses = ['Done', 'Closed', 'Verified', 'Resolved', 'Released', 'Ready for Merge', 'Merged']
 qa_statuses = ['For Testing', 'Verified', 'Resolved', 'QA', 'Ready for QA', 'In QA', 'Ready for Test']
 
+base_url = jira_connector.settings.get("common", "base_url")
 
 def wrap_issues(issues_to_wrap):
     return list(map(lambda st: JiraIssueWrapper(st), issues_to_wrap))
@@ -289,3 +292,7 @@ def to_datetime(datetimeString):
 
 def to_date(dateString):
     return datetime.strptime(dateString, jira_date_tempalte)
+
+
+def jql_build_encoded_url(jql):
+    return base_url + '/issues/?jql=' + urllib.parse.quote(jql)
