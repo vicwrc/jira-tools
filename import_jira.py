@@ -14,7 +14,7 @@ def create_story(issue_tuple):
     return jira.create_issue(fields=result_dict)
 
 
-issues_csv_file = 'in/issue.csv' #sys.argv[1]
+issues_csv_file = sys.argv[1]
 issues_content = read_csv(issues_csv_file)
 for issue_content in issues_content:
     create_story(issue_content)
