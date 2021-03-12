@@ -9,4 +9,4 @@ def search_issues(jql):
 
 
 def get_project_done_tasks_with_story_points(project_name):
-    return search_issues('project = ' + project_name + ' AND "Story Points"  is not empty and statusCategory = done and status !="Ready for Test" and created >= -360d')
+    return search_issues('project = ' + project_name + ' AND "Story Points"  is not empty and statusCategory = done and status !="Ready for Test" and created >= -90d')

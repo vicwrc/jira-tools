@@ -10,6 +10,7 @@ jira_date_tempalte = '%Y-%m-%d'
 open_statuses = ['Open', 'To Do', 'Reopened', 'Backlog', 'Ready for Development', 'In Analysis']
 closed_statuses = ['Done', 'Closed', 'Verified', 'Resolved', 'Released', 'Ready for Merge', 'Merged']
 qa_statuses = ['For Testing', 'Verified', 'Resolved', 'QA', 'Ready for QA', 'In QA', 'Ready for Test']
+dev_statuses = ['In Progress', 'In Development']
 
 base_url = jira_connector.settings.get("common", "base_url")
 
@@ -214,14 +215,20 @@ class JiraIssueWrapper:
                 return original_assignee
         return original_assignee
 
-    def get_actual_working_days_with_gaps(self):
+    def get_dev_actual_working_days_with_gaps(self):
+        return self.get_actual_working_days_with_gaps("dev")
+
+    def get_qa_actual_working_days_with_gaps(self):
+        return self.get_actual_working_days_with_gaps("qa")
+
+    def get_actual_working_days_with_gaps(self, mode="all"):
         histories = list(self.issue_json['changelog']['histories'])
         working_days_spent = 0
         start_date = None
         for history in histories:
-            if start_date is None and is_start_progress(history):
+            if start_date is None and is_start_progress(history, mode):
                 start_date = to_datetime(history['created'])
-            if start_date is not None and is_end_progress(history):
+            if start_date is not None and is_end_progress(history, mode):
                 working_days_spent = working_days_spent + get_working_days(start_date, to_datetime(history['created']))
                 start_date = None
         if start_date is not None:
@@ -252,8 +259,20 @@ def is_status_changed(history):
     return False
 
 
-def is_in_progress_status(status):
+def is_in_progress_status(status, mode="all"):
+    if mode == "qa":
+        return is_qa_in_progress_status(status)
+    if mode == "dev":
+        return is_dev_in_progress_status(status)
     return status not in open_statuses and status not in closed_statuses
+
+
+def is_dev_in_progress_status(status):
+    return status in dev_statuses
+
+
+def is_qa_in_progress_status(status):
+    return status in qa_statuses
 
 
 def get_changed_assignee_name(history):
@@ -270,18 +289,18 @@ def from_open_entry(history):
     return None
 
 
-def is_end_progress(history):
+def is_end_progress(history, mode="all"):
     for item in history['items']:
-        if item['field'] == 'status' and is_in_progress_status(item['fromString']) and not is_in_progress_status(
-                item['toString']):
+        if item['field'] == 'status' and is_in_progress_status(item['fromString'], mode) and not is_in_progress_status(
+                item['toString'], mode):
             return True
     return False
 
 
-def is_start_progress(history):
+def is_start_progress(history, mode="all"):
     for item in history['items']:
-        if item['field'] == 'status' and not is_in_progress_status(item['fromString']) and is_in_progress_status(
-                item['toString']):
+        if item['field'] == 'status' and not is_in_progress_status(item['fromString'], mode) and is_in_progress_status(
+                item['toString'], mode):
             return True
     return False
 
