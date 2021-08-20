@@ -10,6 +10,9 @@ jira = jira_connector.jira
 
 # https://jira.internal-services.com/browse/BC-9696
 
-issue = jira.issue('BC-9696', expand='changelog,transitions,history')
+issue = jira.issue('DEAL-4499', expand='changelog,transitions,history')
 wrapped_issue = wrap_issue(issue)
 print(issue)
+
+# customfield_12000 - DEV Assignee
+# customfield_11000 - QA Assignee

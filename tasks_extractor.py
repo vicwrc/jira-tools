@@ -5,9 +5,9 @@ from collections import namedtuple
 from jiralib.jira_printer import write_tasks
 
 #jira_query = 'project = DEAL and Sprint in openSprints() and status != open'
-jira_query = 'project =B2C and statusCategory =Done and "Squad or Team" ="Product Mobiles"  and updatedDate >= 2020-06-01 and "Story Points" is not EMPTY'
+jira_query = 'project =DEAL and statusCategory =Done and updatedDate >= 2020-09-01 and Sprint is not empty and createdDate >=2020-01-01'
 # filename = "epic-22_p1.csv"
-filename = "product_mobiles.csv"
+filename = "dealing.csv"
 
 # jira_query = '"Epic Link" =DEAL-4026'
 # filename = "Variable spread.csv"

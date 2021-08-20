@@ -14,6 +14,7 @@ dev_statuses = ['In Progress', 'In Development']
 
 base_url = jira_connector.settings.get("common", "base_url")
 
+
 def wrap_issues(issues_to_wrap):
     return list(map(lambda st: JiraIssueWrapper(st), issues_to_wrap))
 
@@ -64,6 +65,9 @@ class JiraIssueWrapper:
         return self.issue_json['fields']['priority']
 
     def get_assignee_name(self):
+        # Dealing team case support
+        if self.get_dev_assignee() is not None:
+            return self.get_dev_assignee()['name']
         assignee = self.get_assignee()
         if assignee is None:
             return None
@@ -100,6 +104,16 @@ class JiraIssueWrapper:
         if 'customfield_10002' not in self.issue_json['fields']:
             return None
         return self.issue_json['fields']['customfield_10002']
+
+    def get_dev_assignee(self):
+        if 'customfield_12000' not in self.issue_json['fields']:
+            return None
+        return self.issue_json['fields']['customfield_12000']
+
+    def get_qa_assignee(self):
+        if 'customfield_11000' not in self.issue_json['fields']:
+            return None
+        return self.issue_json['fields']['customfield_11000']
 
     def is_estimated(self):
         if self.get_issue_type()['name'] in ('Story', 'Task') and self.get_story_points() is None:
@@ -305,8 +319,8 @@ def is_start_progress(history, mode="all"):
     return False
 
 
-def to_datetime(datetimeString):
-    return datetime.strptime(datetimeString.replace('T', ' ').replace('+0000', ''), jira_datetime_tempalte)
+def to_datetime(datetime_string):
+    return datetime.strptime(datetime_string.replace('T', ' ').replace('+0000', ''), jira_datetime_tempalte)
 
 
 def to_date(dateString):
